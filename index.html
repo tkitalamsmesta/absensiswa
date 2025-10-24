@@ -1,482 +1,409 @@
 <!DOCTYPE html>
 <html lang="id" class="h-full">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Spreadsheet Viewer</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Siswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
-        box-sizing: border-box;
-      }
-      .fade-in {
-        animation: fadeIn 0.5s ease-in;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        body {
+            box-sizing: border-box;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
         }
-      }
-      .hover-scale {
-        transition: transform 0.2s ease;
-      }
-      .hover-scale:hover {
-        transform: scale(1.02);
-      }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hover-scale {
+            transition: transform 0.2s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
     </style>
-  </head>
-  <body class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 font-sans">
+</head>
+<body class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 font-sans">
     <div class="min-h-full">
-      <!-- Header -->
-      <header class="bg-white shadow-lg border-b-4 border-indigo-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900">
-                📊 Absesnsi Siswa
-              </h1>
-              <p class="text-gray-600 mt-1">
-                Tampilan interaktif untuk Absen Siswa
-              </p>
+        <!-- Header -->
+        <header class="bg-white shadow-lg border-b-4 border-indigo-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">📋 Absensi Siswa</h1>
+                        <p class="text-gray-600 mt-1">Sistem monitoring kehadiran siswa secara real-time</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="refreshData()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2">
+                            <span>🔄</span>
+                            <span>Refresh</span>
+                        </button>
+                        <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vRN456ufcnV8p34hdyVRnk9OaVhMNj-XnEN7LPwLL6NNaLzTDRGxSLiX7apzymFFpYL-14rqqHZ535g/pubhtml?gid=576350133&single=true" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2">
+                            <span>📝</span>
+                            <span>View Sheet</span>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="flex space-x-3">
-              <button
-                onclick="refreshData()"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
-              >
-                <span>🔄</span>
-                <span>Refresh</span>
-              </button>
-              <a
-                href="https://docs.google.com/spreadsheets/d/1uTZl2ueoNNIrYDTVSup6349Uv9MibJQ_jtMe3vhG5sU/edit?gid=576350133#gid=576350133"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
-              >
-                <span>📝</span>
-                <span>Edit Sheet</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+        </header>
 
-      <!-- Main Content -->
-      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Data Table Container -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
-          <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-              <h2 class="text-xl font-semibold text-gray-900">Data Tabel</h2>
-              <div class="flex items-center space-x-4">
-                <select
-                  id="classFilter"
-                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
-                >
-                  <option value="">Semua Kelas</option>
-                </select>
-                <input
-                  type="text"
-                  id="searchInput"
-                  placeholder="Cari data..."
-                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                />
-                <select
-                  id="filterColumn"
-                  class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                >
-                  <option value="">Semua Kolom</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <div
-              id="loadingState"
-              class="flex items-center justify-center py-12"
-            >
-              <div class="text-center">
-                <div
-                  class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"
-                ></div>
-                <p class="text-gray-600">Memuat data spreadsheet...</p>
-              </div>
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6 hover-scale fade-in">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-full">
+                            <span class="text-2xl">✅</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Sudah Dijemput</p>
+                            <p class="text-2xl font-bold text-green-600" id="pickedUpCount">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 hover-scale fade-in">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-red-100 rounded-full">
+                            <span class="text-2xl">⏳</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Belum Dijemput</p>
+                            <p class="text-2xl font-bold text-red-600" id="notPickedUpCount">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 hover-scale fade-in">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-full">
+                            <span class="text-2xl">🕒</span>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Terakhir Update</p>
+                            <p class="text-sm font-bold text-gray-900" id="lastUpdate">-</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div
-              id="errorState"
-              class="hidden flex items-center justify-center py-12"
-            >
-              <div class="text-center">
-                <span class="text-6xl mb-4 block">⚠️</span>
-                <p class="text-gray-600 mb-4">
-                  Tidak dapat memuat data dari spreadsheet
-                </p>
-                <p class="text-sm text-gray-500 mb-4">
-                  Pastikan spreadsheet dapat diakses secara publik
-                </p>
-                <button
-                  onclick="loadSpreadsheetData()"
-                  class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium"
-                >
-                  Coba Lagi
-                </button>
-              </div>
+            <!-- Data Table Container -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden fade-in">
+                <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold text-gray-900">Data Tabel</h2>
+                        <div class="flex items-center space-x-4">
+                            <select id="classFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
+                                <option value="">Semua Kelas</option>
+                            </select>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   placeholder="Cari data..." 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                            <select id="filterColumn" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                                <option value="">Semua Kolom</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <div id="loadingState" class="flex items-center justify-center py-12">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                            <p class="text-gray-600">Memuat data spreadsheet...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="errorState" class="hidden flex items-center justify-center py-12">
+                        <div class="text-center">
+                            <span class="text-6xl mb-4 block">⚠️</span>
+                            <p class="text-gray-600 mb-4">Tidak dapat memuat data dari spreadsheet</p>
+                            <p class="text-sm text-gray-500 mb-4">Pastikan spreadsheet dapat diakses secara publik</p>
+                            <button onclick="loadSpreadsheetData()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium">
+                                Coba Lagi
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <table id="dataTable" class="hidden min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr id="tableHeader"></tr>
+                        </thead>
+                        <tbody id="tableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="pagination" class="hidden px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Menampilkan <span id="showingStart">1</span> - <span id="showingEnd">10</span> dari <span id="totalEntries">0</span> data
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="previousPage()" id="prevBtn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Sebelumnya
+                            </button>
+                            <button onclick="nextPage()" id="nextBtn" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Selanjutnya
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <table
-              id="dataTable"
-              class="hidden min-w-full divide-y divide-gray-200"
-            >
-              <thead class="bg-gray-50">
-                <tr id="tableHeader"></tr>
-              </thead>
-              <tbody
-                id="tableBody"
-                class="bg-white divide-y divide-gray-200"
-              ></tbody>
-            </table>
-          </div>
-
-          <!-- Pagination -->
-          <div
-            id="pagination"
-            class="hidden px-6 py-4 bg-gray-50 border-t border-gray-200"
-          >
-            <div class="flex items-center justify-between">
-              <div class="text-sm text-gray-700">
-                Menampilkan <span id="showingStart">1</span> -
-                <span id="showingEnd">10</span> dari
-                <span id="totalEntries">0</span> data
-              </div>
-              <div class="flex space-x-2">
-                <button
-                  onclick="previousPage()"
-                  id="prevBtn"
-                  class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Sebelumnya
-                </button>
-                <button
-                  onclick="nextPage()"
-                  id="nextBtn"
-                  class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Selanjutnya
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
     </div>
 
     <script>
-      let spreadsheetData = [];
-      let filteredData = [];
-      let currentPage = 1;
-      const itemsPerPage = 10;
+        let spreadsheetData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
 
-      // Extract spreadsheet ID from URL
-      const spreadsheetUrl =
-        "https://docs.google.com/spreadsheets/d/1uTZl2ueoNNIrYDTVSup6349Uv9MibJQ_jtMe3vhG5sU";
-      const spreadsheetId = "1uTZl2ueoNNIrYDTVSup6349Uv9MibJQ_jtMe3vhG5sU";
-      const sheetId = "576350133";
+        // Extract spreadsheet ID from URL
+        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRN456ufcnV8p34hdyVRnk9OaVhMNj-XnEN7LPwLL6NNaLzTDRGxSLiX7apzymFFpYL-14rqqHZ535g/pubhtml?gid=576350133&single=true';
+        const spreadsheetId = '2PACX-1vRN456ufcnV8p34hdyVRnk9OaVhMNj-XnEN7LPwLL6NNaLzTDRGxSLiX7apzymFFpYL-14rqqHZ535g';
+        const sheetId = '576350133';
 
-      async function loadSpreadsheetData() {
-        try {
-          document.getElementById("loadingState").classList.remove("hidden");
-          document.getElementById("errorState").classList.add("hidden");
-          document.getElementById("dataTable").classList.add("hidden");
-          document.getElementById("pagination").classList.add("hidden");
+        async function loadSpreadsheetData() {
+            try {
+                document.getElementById('loadingState').classList.remove('hidden');
+                document.getElementById('errorState').classList.add('hidden');
+                document.getElementById('dataTable').classList.add('hidden');
+                document.getElementById('pagination').classList.add('hidden');
 
-          // Try to fetch data using CSV export
-          const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${sheetId}`;
-          const response = await fetch(csvUrl);
+                // Try to fetch data using CSV export
+                const csvUrl = `https://docs.google.com/spreadsheets/d/e/${spreadsheetId}/pub?output=csv&gid=${sheetId}`;
+                const response = await fetch(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch data");
-          }
+                const csvText = await response.text();
+                const rows = csvText.split('\n').filter(row => row.trim());
+                
+                if (rows.length === 0) {
+                    throw new Error('No data found');
+                }
 
-          const csvText = await response.text();
-          const rows = csvText.split("\n").filter((row) => row.trim());
+                // Parse CSV data
+                spreadsheetData = rows.map(row => {
+                    // Simple CSV parsing (handles basic cases)
+                    const cells = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < row.length; i++) {
+                        const char = row[i];
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            cells.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    cells.push(current.trim());
+                    return cells;
+                });
 
-          if (rows.length === 0) {
-            throw new Error("No data found");
-          }
+                displayData();
+                updateStats();
+                setupFilters();
+                
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('dataTable').classList.remove('hidden');
+                document.getElementById('pagination').classList.remove('hidden');
 
-          // Parse CSV data
-          spreadsheetData = rows.map((row) => {
-            // Simple CSV parsing (handles basic cases)
-            const cells = [];
-            let current = "";
-            let inQuotes = false;
-
-            for (let i = 0; i < row.length; i++) {
-              const char = row[i];
-              if (char === '"') {
-                inQuotes = !inQuotes;
-              } else if (char === "," && !inQuotes) {
-                cells.push(current.trim());
-                current = "";
-              } else {
-                current += char;
-              }
+            } catch (error) {
+                console.error('Error loading spreadsheet:', error);
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
             }
-            cells.push(current.trim());
-            return cells;
-          });
-
-          displayData();
-          updateStats();
-          setupFilters();
-
-          document.getElementById("loadingState").classList.add("hidden");
-          document.getElementById("dataTable").classList.remove("hidden");
-          document.getElementById("pagination").classList.remove("hidden");
-        } catch (error) {
-          console.error("Error loading spreadsheet:", error);
-          document.getElementById("loadingState").classList.add("hidden");
-          document.getElementById("errorState").classList.remove("hidden");
         }
-      }
 
-      function displayData() {
-        if (spreadsheetData.length === 0) return;
+        function displayData() {
+            if (spreadsheetData.length === 0) return;
 
-        const headers = spreadsheetData[0];
-        const dataRows = spreadsheetData.slice(1);
+            const headers = spreadsheetData[0];
+            const dataRows = spreadsheetData.slice(1);
+            
+            // Apply filters
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterColumn = document.getElementById('filterColumn').value;
+            const classFilter = document.getElementById('classFilter').value;
+            
+            filteredData = dataRows.filter(row => {
+                // Class filter
+                if (classFilter) {
+                    const classColumnIndex = headers.findIndex(h => h.toLowerCase().includes('kelas') || h.toLowerCase().includes('class'));
+                    if (classColumnIndex >= 0 && row[classColumnIndex] !== classFilter) {
+                        return false;
+                    }
+                }
+                
+                // Search filter
+                if (searchTerm) {
+                    if (filterColumn) {
+                        const columnIndex = headers.indexOf(filterColumn);
+                        return columnIndex >= 0 && row[columnIndex] && 
+                               row[columnIndex].toLowerCase().includes(searchTerm);
+                    } else {
+                        return row.some(cell => cell && cell.toLowerCase().includes(searchTerm));
+                    }
+                }
+                
+                return true;
+            });
 
-        // Apply filters
-        const searchTerm = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
-        const filterColumn = document.getElementById("filterColumn").value;
-        const classFilter = document.getElementById("classFilter").value;
+            // Create table header
+            const headerRow = document.getElementById('tableHeader');
+            headerRow.innerHTML = headers.map(header => 
+                `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${header}</th>`
+            ).join('');
 
-        filteredData = dataRows.filter((row) => {
-          // Class filter
-          if (classFilter) {
-            const classColumnIndex = headers.findIndex(
-              (h) =>
-                h.toLowerCase().includes("kelas") ||
-                h.toLowerCase().includes("class")
-            );
-            if (
-              classColumnIndex >= 0 &&
-              row[classColumnIndex] !== classFilter
-            ) {
-              return false;
-            }
-          }
+            // Create table body with pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = filteredData.slice(startIndex, endIndex);
 
-          // Search filter
-          if (searchTerm) {
-            if (filterColumn) {
-              const columnIndex = headers.indexOf(filterColumn);
-              return (
-                columnIndex >= 0 &&
-                row[columnIndex] &&
-                row[columnIndex].toLowerCase().includes(searchTerm)
-              );
-            } else {
-              return row.some(
-                (cell) => cell && cell.toLowerCase().includes(searchTerm)
-              );
-            }
-          }
-
-          return true;
-        });
-
-        // Create table header
-        const headerRow = document.getElementById("tableHeader");
-        headerRow.innerHTML = headers
-          .map(
-            (header) =>
-              `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${header}</th>`
-          )
-          .join("");
-
-        // Create table body with pagination
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const pageData = filteredData.slice(startIndex, endIndex);
-
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = pageData
-          .map(
-            (row, index) =>
-              `<tr class="${
-                index % 2 === 0 ? "bg-white" : "bg-gray-50"
-              } hover:bg-indigo-50 transition-colors duration-150">
-                    ${row
-                      .map((cell, cellIndex) => {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = pageData.map((row, index) => 
+                `<tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-indigo-50 transition-colors duration-150">
+                    ${row.map((cell, cellIndex) => {
                         // Check if cell contains a URL
-                        const isUrl =
-                          cell &&
-                          (cell.startsWith("http://") ||
-                            cell.startsWith("https://") ||
-                            cell.startsWith("www."));
-                        const cellContent = isUrl
-                          ? `<a href="${
-                              cell.startsWith("www.") ? "https://" + cell : cell
-                            }" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline font-medium">🔗 Link</a>`
-                          : cell || "-";
+                        const isUrl = cell && (cell.startsWith('http://') || cell.startsWith('https://') || cell.startsWith('www.'));
+                        const cellContent = isUrl ? 
+                            `<a href="${cell.startsWith('www.') ? 'https://' + cell : cell}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline font-medium">🔗 Link</a>` : 
+                            (cell || '-');
                         return `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cellContent}</td>`;
-                      })
-                      .join("")}
+                    }).join('')}
                 </tr>`
-          )
-          .join("");
+            ).join('');
 
-        updatePagination();
-      }
-
-      function updateStats() {
-        document.getElementById("totalRows").textContent =
-          spreadsheetData.length - 1; // Exclude header
-        document.getElementById("totalCols").textContent =
-          spreadsheetData.length > 0 ? spreadsheetData[0].length : 0;
-        document.getElementById("lastUpdate").textContent =
-          new Date().toLocaleString("id-ID");
-      }
-
-      function setupFilters() {
-        if (spreadsheetData.length === 0) return;
-
-        const headers = spreadsheetData[0];
-        const dataRows = spreadsheetData.slice(1);
-
-        // Setup column filter
-        const filterSelect = document.getElementById("filterColumn");
-        filterSelect.innerHTML =
-          '<option value="">Semua Kolom</option>' +
-          headers
-            .map((header) => `<option value="${header}">${header}</option>`)
-            .join("");
-
-        // Setup class filter
-        const classColumnIndex = headers.findIndex(
-          (h) =>
-            h.toLowerCase().includes("kelas") ||
-            h.toLowerCase().includes("class")
-        );
-        const classFilter = document.getElementById("classFilter");
-
-        if (classColumnIndex >= 0) {
-          const uniqueClasses = [
-            ...new Set(
-              dataRows
-                .map((row) => row[classColumnIndex])
-                .filter((cls) => cls && cls.trim())
-            ),
-          ].sort();
-          classFilter.innerHTML =
-            '<option value="">Semua Kelas</option>' +
-            uniqueClasses
-              .map((cls) => `<option value="${cls}">${cls}</option>`)
-              .join("");
+            updatePagination();
         }
 
-        // Add event listeners
-        document.getElementById("searchInput").addEventListener("input", () => {
-          currentPage = 1;
-          displayData();
-        });
-
-        filterSelect.addEventListener("change", () => {
-          currentPage = 1;
-          displayData();
-        });
-
-        classFilter.addEventListener("change", () => {
-          currentPage = 1;
-          displayData();
-        });
-      }
-
-      function updatePagination() {
-        const totalItems = filteredData.length;
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-        const startIndex = (currentPage - 1) * itemsPerPage + 1;
-        const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
-
-        document.getElementById("showingStart").textContent =
-          totalItems > 0 ? startIndex : 0;
-        document.getElementById("showingEnd").textContent = endIndex;
-        document.getElementById("totalEntries").textContent = totalItems;
-
-        document.getElementById("prevBtn").disabled = currentPage <= 1;
-        document.getElementById("nextBtn").disabled = currentPage >= totalPages;
-      }
-
-      function previousPage() {
-        if (currentPage > 1) {
-          currentPage--;
-          displayData();
+        function updateStats() {
+            if (spreadsheetData.length === 0) return;
+            
+            const headers = spreadsheetData[0];
+            const dataRows = spreadsheetData.slice(1);
+            
+            // Find status column (look for columns containing "status", "jemput", "pickup", etc.)
+            const statusColumnIndex = headers.findIndex(h => 
+                h.toLowerCase().includes('status') || 
+                h.toLowerCase().includes('jemput') || 
+                h.toLowerCase().includes('pickup') ||
+                h.toLowerCase().includes('dijemput')
+            );
+            
+            let pickedUpCount = 0;
+            let notPickedUpCount = 0;
+            
+            if (statusColumnIndex >= 0) {
+                dataRows.forEach(row => {
+                    const status = row[statusColumnIndex] ? row[statusColumnIndex].toLowerCase() : '';
+                    if (status.includes('sudah') || status.includes('ya') || status.includes('yes') || status.includes('dijemput') || status.includes('picked')) {
+                        pickedUpCount++;
+                    } else if (status.includes('belum') || status.includes('tidak') || status.includes('no') || status.includes('pending') || status.trim() === '') {
+                        notPickedUpCount++;
+                    }
+                });
+            } else {
+                // If no status column found, assume all are not picked up
+                notPickedUpCount = dataRows.length;
+            }
+            
+            document.getElementById('pickedUpCount').textContent = pickedUpCount;
+            document.getElementById('notPickedUpCount').textContent = notPickedUpCount;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('id-ID');
         }
-      }
 
-      function nextPage() {
-        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-        if (currentPage < totalPages) {
-          currentPage++;
-          displayData();
+        function setupFilters() {
+            if (spreadsheetData.length === 0) return;
+            
+            const headers = spreadsheetData[0];
+            const dataRows = spreadsheetData.slice(1);
+            
+            // Setup column filter
+            const filterSelect = document.getElementById('filterColumn');
+            filterSelect.innerHTML = '<option value="">Semua Kolom</option>' + 
+                headers.map(header => `<option value="${header}">${header}</option>`).join('');
+
+            // Setup class filter
+            const classColumnIndex = headers.findIndex(h => h.toLowerCase().includes('kelas') || h.toLowerCase().includes('class'));
+            const classFilter = document.getElementById('classFilter');
+            
+            if (classColumnIndex >= 0) {
+                const uniqueClasses = [...new Set(dataRows.map(row => row[classColumnIndex]).filter(cls => cls && cls.trim()))].sort();
+                classFilter.innerHTML = '<option value="">Semua Kelas</option>' + 
+                    uniqueClasses.map(cls => `<option value="${cls}">${cls}</option>`).join('');
+            }
+
+            // Add event listeners
+            document.getElementById('searchInput').addEventListener('input', () => {
+                currentPage = 1;
+                displayData();
+            });
+
+            filterSelect.addEventListener('change', () => {
+                currentPage = 1;
+                displayData();
+            });
+
+            classFilter.addEventListener('change', () => {
+                currentPage = 1;
+                displayData();
+            });
         }
-      }
 
-      function refreshData() {
-        currentPage = 1;
-        document.getElementById("searchInput").value = "";
-        document.getElementById("filterColumn").value = "";
-        document.getElementById("classFilter").value = "";
-        loadSpreadsheetData();
-      }
+        function updatePagination() {
+            const totalItems = filteredData.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
-      // Load data when page loads
-      window.addEventListener("load", loadSpreadsheetData);
+            document.getElementById('showingStart').textContent = totalItems > 0 ? startIndex : 0;
+            document.getElementById('showingEnd').textContent = endIndex;
+            document.getElementById('totalEntries').textContent = totalItems;
+
+            document.getElementById('prevBtn').disabled = currentPage <= 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayData();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayData();
+            }
+        }
+
+        function refreshData() {
+            currentPage = 1;
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterColumn').value = '';
+            document.getElementById('classFilter').value = '';
+            loadSpreadsheetData();
+        }
+
+        // Load data when page loads
+        window.addEventListener('load', loadSpreadsheetData);
     </script>
-    <script>
-      (function () {
-        function c() {
-          var b = a.contentDocument || a.contentWindow.document;
-          if (b) {
-            var d = b.createElement("script");
-            d.innerHTML =
-              "window.__CF$cv$params={r:'99361175a09d2a90',t:'MTc2MTI3MzE5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-            b.getElementsByTagName("head")[0].appendChild(d);
-          }
-        }
-        if (document.body) {
-          var a = document.createElement("iframe");
-          a.height = 1;
-          a.width = 1;
-          a.style.position = "absolute";
-          a.style.top = 0;
-          a.style.left = 0;
-          a.style.border = "none";
-          a.style.visibility = "hidden";
-          document.body.appendChild(a);
-          if ("loading" !== document.readyState) c();
-          else if (window.addEventListener)
-            document.addEventListener("DOMContentLoaded", c);
-          else {
-            var e = document.onreadystatechange || function () {};
-            document.onreadystatechange = function (b) {
-              e(b);
-              "loading" !== document.readyState &&
-                ((document.onreadystatechange = e), c());
-            };
-          }
-        }
-      })();
-    </script>
-  </body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'993631ca5605fdab',t:'MTc2MTI3NDUxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
